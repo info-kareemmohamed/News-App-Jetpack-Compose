@@ -86,7 +86,8 @@ fun OnBoardingScreen(
                 // Get Started button shown only on the last page
                 AnimatedVisibility(visible = state.isLastPage) {
                     NewsButton(text = "Get Started") {
-                        //TODO Navigate to Home Screen
+                     viewModel.onIntent(OnBoardingIntent.SaveAppEntry)
+
                     }
                 }
             }
