@@ -1,5 +1,6 @@
 package com.example.news.onboarding.presentation
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,11 +42,12 @@ fun OnBoardingScreen(
         pagerState.animateScrollToPage(state.currentPage)
     }
 
-    // Update ViewModel when page changes
+    // Update ViewModel when page changes (sync pager state to ViewModel)
     LaunchedEffect(pagerState.currentPage) {
-        viewModel.onIntent(OnBoardingIntent.OnChangePage(pagerState.currentPage))
+        if (pagerState.currentPage != state.currentPage) {
+            viewModel.onIntent(OnBoardingIntent.OnChangePage(pagerState.currentPage))
+        }
     }
-
 
 
     Column(
@@ -75,22 +77,22 @@ fun OnBoardingScreen(
                         viewModel.onIntent(OnBoardingIntent.OnChangePage(state.currentPage - 1))
                     }
                 }
-                NewsButton(text = if (state.isLastPage) "Get Started" else "Next") {
-                    if (state.isLastPage) {
-                        //TODO Navigate to Home Screen
-                    } else {
+                if (!state.isLastPage)
+                    NewsButton(text = "Next") {
                         viewModel.onIntent(OnBoardingIntent.OnChangePage(state.currentPage + 1))
+
+                    }
+
+                // Get Started button shown only on the last page
+                AnimatedVisibility(visible = state.isLastPage) {
+                    NewsButton(text = "Get Started") {
+                        //TODO Navigate to Home Screen
                     }
                 }
-
             }
-
         }
         Spacer(modifier = Modifier.weight(0.5f))
-
-
     }
-
 
 }
 
