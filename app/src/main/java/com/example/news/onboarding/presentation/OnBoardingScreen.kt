@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.news.core.presentation.common.NewsButton
 import com.example.news.core.presentation.common.NewsTextButton
-import com.example.news.onboarding.presentation.Dimens.MediumPadding1
+import com.example.news.core.util.Dimens.MediumPadding_24
 import com.example.news.onboarding.presentation.components.OnBoardingPage
 import com.example.news.onboarding.presentation.components.PagerIndicator
 import com.example.news.onboarding.presentation.mvi.OnBoardingIntent
@@ -61,7 +61,7 @@ fun OnBoardingScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(MediumPadding1)
+                .padding(MediumPadding_24)
                 .navigationBarsPadding(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically

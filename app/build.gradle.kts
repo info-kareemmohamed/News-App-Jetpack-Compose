@@ -77,4 +77,12 @@ dependencies {
 
     implementation ("androidx.datastore:datastore-preferences:1.1.1")
 
+    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
+
+    implementation ("androidx.paging:paging-runtime:3.1.1")
+    implementation ("androidx.paging:paging-compose:3.2.0-rc01")
+
+    implementation("io.coil-kt:coil-compose:2.7.0")
+
 }
