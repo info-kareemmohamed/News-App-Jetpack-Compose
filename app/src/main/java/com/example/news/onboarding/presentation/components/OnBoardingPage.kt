@@ -20,9 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.news.R
 import com.example.news.core.presentation.ui.theme.NewsTheme
 import com.example.news.onboarding.data.Page
-import com.example.news.onboarding.presentation.Dimens.MediumPadding1
-import com.example.news.onboarding.presentation.Dimens.MediumPadding2
-import com.example.news.onboarding.presentation.Dimens.SmallPadding
+import com.example.news.core.util.Dimens.MediumPadding_24
+import com.example.news.core.util.Dimens.MediumPadding_30
+import com.example.news.core.util.Dimens.SmallPadding
 
 @Composable
 fun OnBoardingPage(
@@ -41,11 +41,11 @@ fun OnBoardingPage(
             contentDescription = null,
             contentScale = ContentScale.Crop
         )
-        Spacer(modifier = Modifier.height(MediumPadding1))
+        Spacer(modifier = Modifier.height(MediumPadding_24))
 
         Text(
             text = page.title,
-            modifier = Modifier.padding(horizontal = MediumPadding2),
+            modifier = Modifier.padding(horizontal = MediumPadding_30),
             style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.SemiBold),
             color = colorResource(id = R.color.display_small)
         )
@@ -54,7 +54,7 @@ fun OnBoardingPage(
 
         Text(
             text = page.description,
-            modifier = Modifier.padding(horizontal = MediumPadding2),
+            modifier = Modifier.padding(horizontal = MediumPadding_30),
             style = MaterialTheme.typography.bodyMedium,
             color = colorResource(id = R.color.text_medium)
 
