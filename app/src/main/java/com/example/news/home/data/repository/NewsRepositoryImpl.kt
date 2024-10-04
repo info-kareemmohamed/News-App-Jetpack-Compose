@@ -15,7 +15,7 @@ class NewsRepositoryImpl @Inject constructor(
 ) : NewsRepository {
     override fun getNews(sources: List<String>): Flow<PagingData<Article>> {
         return Pager(
-            config = PagingConfig(pageSize = 10),
+            config = PagingConfig(pageSize = 15),
             pagingSourceFactory = {
                 NewsPagingSource(newsApi, sources.joinToString(separator = ","))
             }

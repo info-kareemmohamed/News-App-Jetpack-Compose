@@ -4,10 +4,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.news.home.presentation.HomeScreen
+import com.example.news.home.presentation.HomeViewModel
 import com.example.news.onboarding.presentation.OnBoardingScreen
 
 @Composable
@@ -37,9 +41,11 @@ fun NavGraph(
         ) {
 
             composable(
-                route =  Route.NewsNavigatorScreen.route
+                route = Route.NewsNavigatorScreen.route
             ) {
-                Text(text = "Home Screen", modifier = Modifier.fillMaxSize())
+                val viewModel: HomeViewModel = hiltViewModel()
+                val articles = viewModel.news.collectAsLazyPagingItems()
+                HomeScreen(articles = articles, navigate = {})
             }
         }
 
