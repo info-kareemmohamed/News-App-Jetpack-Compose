@@ -1,4 +1,4 @@
-package com.example.news.home.domain.model
+package com.example.news.core.domain.model
 
 
 data class Article(

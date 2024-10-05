@@ -1,7 +1,7 @@
-package com.example.news.home.data.remote
+package com.example.news.core.data.remote
 
 import com.example.news.core.util.Constants.API_KEY
-import com.example.news.home.data.remote.dto.NewsResponse
+import com.example.news.core.data.remote.dto.NewsResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

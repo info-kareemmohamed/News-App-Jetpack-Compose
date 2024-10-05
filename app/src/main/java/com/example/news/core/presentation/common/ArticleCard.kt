@@ -1,4 +1,4 @@
-package com.example.news.home.presentation.components
+package com.example.news.core.presentation.common
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.clickable
@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,7 +32,7 @@ import com.example.news.core.presentation.ui.theme.NewsTheme
 import com.example.news.core.util.Dimens.ArticleCardSize
 import com.example.news.core.util.Dimens.ExtraSmallPadding_3
 import com.example.news.core.util.Dimens.ExtraSmallPadding_6
-import com.example.news.home.domain.model.Article
+import com.example.news.core.domain.model.Article
 
 
 @Composable

@@ -4,9 +4,9 @@ import android.app.Application
 import com.example.news.core.data.repository.LocalUserAppEntryImpl
 import com.example.news.core.domain.repository.LocalUserAppEntry
 import com.example.news.core.util.Constants.BASE_URL
-import com.example.news.home.data.remote.NewsApi
-import com.example.news.home.data.repository.NewsRepositoryImpl
-import com.example.news.home.domain.repository.NewsRepository
+import com.example.news.core.data.remote.NewsApi
+import com.example.news.core.data.repository.NewsRepositoryImpl
+import com.example.news.core.domain.repository.NewsRepository
 import com.example.news.onboarding.data.PageData
 import dagger.Module
 import dagger.Provides

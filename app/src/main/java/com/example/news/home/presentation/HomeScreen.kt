@@ -26,8 +26,8 @@ import com.example.news.R
 import com.example.news.core.presentation.common.SearchBar
 import com.example.news.core.presentation.navgraph.Route
 import com.example.news.core.util.Dimens.MediumPadding_24
-import com.example.news.home.domain.model.Article
-import com.example.news.home.presentation.components.ArticlesList
+import com.example.news.core.domain.model.Article
+import com.example.news.core.presentation.common.ArticlesList
 
 
 @OptIn(ExperimentalFoundationApi::class)
