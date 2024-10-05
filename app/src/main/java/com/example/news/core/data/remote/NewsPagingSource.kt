@@ -1,9 +1,9 @@
-package com.example.news.home.data.remote
+package com.example.news.core.data.remote
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.news.home.data.mappers.toArticle
-import com.example.news.home.domain.model.Article
+import com.example.news.core.data.mappers.toArticle
+import com.example.news.core.domain.model.Article
 
 
 class NewsPagingSource(

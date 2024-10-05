@@ -1,6 +1,6 @@
-package com.example.news.home.domain.usecase
+package com.example.news.home.domain
 
-import com.example.news.home.domain.repository.NewsRepository
+import com.example.news.core.domain.repository.NewsRepository
 import javax.inject.Inject
 
 class GetNewsUseCase @Inject constructor(

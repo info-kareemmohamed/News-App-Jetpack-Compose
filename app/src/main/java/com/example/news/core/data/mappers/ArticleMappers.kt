@@ -1,9 +1,9 @@
-package com.example.news.home.data.mappers
+package com.example.news.core.data.mappers
 
-import com.example.news.home.data.remote.dto.ArticleDto
-import com.example.news.home.domain.model.Article
+import com.example.news.core.data.remote.dto.ArticleDto
+import com.example.news.core.domain.model.Article
 
-fun ArticleDto.toArticle():Article=
+fun ArticleDto.toArticle(): Article =
     Article(
         author = author,
         content = content,

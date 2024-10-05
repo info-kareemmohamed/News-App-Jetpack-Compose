@@ -1,4 +1,4 @@
-package com.example.news.home.presentation.components
+package com.example.news.core.presentation.common
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.news.core.presentation.common.shimmerEffect
 import com.example.news.core.presentation.ui.theme.NewsTheme
 import com.example.news.core.util.Dimens.ArticleCardSize
 import com.example.news.core.util.Dimens.ExtraSmallPadding_3

@@ -1,4 +1,4 @@
-package com.example.news.home.presentation.components
+package com.example.news.core.presentation.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,10 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import com.example.news.core.presentation.common.EmptyScreen
 import com.example.news.core.util.Dimens.ExtraSmallPadding_6
 import com.example.news.core.util.Dimens.MediumPadding_24
-import com.example.news.home.domain.model.Article
+import com.example.news.core.domain.model.Article
 
 @Composable
 fun ArticlesList(
