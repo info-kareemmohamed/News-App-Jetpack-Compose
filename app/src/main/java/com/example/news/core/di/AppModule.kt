@@ -1,6 +1,9 @@
 package com.example.news.core.di
 
 import android.app.Application
+import androidx.room.Room
+import com.example.news.bookmark.Constants.BOOKMARK_NAME_DB
+import com.example.news.bookmark.data.local.ArticleBookMarkDatabase
 import com.example.news.core.data.repository.LocalUserAppEntryImpl
 import com.example.news.core.domain.repository.LocalUserAppEntry
 import com.example.news.core.util.Constants.BASE_URL
@@ -41,6 +44,21 @@ object AppModule {
             .create(NewsApi::class.java)
     }
 
+
+    @Provides
+    @Singleton
+    fun provideArticleBookMarkDatabase(application: Application): ArticleBookMarkDatabase {
+        return Room.databaseBuilder(
+            context = application,
+            klass = ArticleBookMarkDatabase::class.java,
+            name = BOOKMARK_NAME_DB,
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideArticleBookMarkDao(articleBookMarkDatabase: ArticleBookMarkDatabase) =
+        articleBookMarkDatabase.dao
 
 
     @Provides
