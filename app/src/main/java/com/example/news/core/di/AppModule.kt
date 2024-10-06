@@ -3,7 +3,10 @@ package com.example.news.core.di
 import android.app.Application
 import androidx.room.Room
 import com.example.news.bookmark.Constants.BOOKMARK_NAME_DB
-import com.example.news.bookmark.data.local.ArticleBookMarkDatabase
+import com.example.news.bookmark.data.local.ArticleBookmarkDao
+import com.example.news.bookmark.data.local.ArticleBookmarkDatabase
+import com.example.news.bookmark.data.repository.ArticleBookmarkRepositoryImpl
+import com.example.news.bookmark.domain.repository.ArticleBookmarkRepository
 import com.example.news.core.data.repository.LocalUserAppEntryImpl
 import com.example.news.core.domain.repository.LocalUserAppEntry
 import com.example.news.core.util.Constants.BASE_URL
@@ -47,17 +50,17 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideArticleBookMarkDatabase(application: Application): ArticleBookMarkDatabase {
+    fun provideArticleBookMarkDatabase(application: Application): ArticleBookmarkDatabase {
         return Room.databaseBuilder(
             context = application,
-            klass = ArticleBookMarkDatabase::class.java,
+            klass = ArticleBookmarkDatabase::class.java,
             name = BOOKMARK_NAME_DB,
         ).build()
     }
 
     @Provides
     @Singleton
-    fun provideArticleBookMarkDao(articleBookMarkDatabase: ArticleBookMarkDatabase) =
+    fun provideArticleBookMarkDao(articleBookMarkDatabase: ArticleBookmarkDatabase) =
         articleBookMarkDatabase.dao
 
 
@@ -65,5 +68,9 @@ object AppModule {
     @Singleton
     fun provideNewsRepository(newsApi: NewsApi): NewsRepository = NewsRepositoryImpl(newsApi)
 
+    @Provides
+    @Singleton
+    fun provideBookmarkRepository(articleBookmarkDao: ArticleBookmarkDao): ArticleBookmarkRepository =
+        ArticleBookmarkRepositoryImpl(articleBookmarkDao)
 
 }
