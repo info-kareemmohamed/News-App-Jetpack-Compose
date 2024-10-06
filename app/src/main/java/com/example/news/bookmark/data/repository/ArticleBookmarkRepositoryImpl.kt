@@ -1,14 +1,14 @@
 package com.example.news.bookmark.data.repository
 
-import com.example.news.bookmark.data.local.ArticleBookMarkDao
-import com.example.news.bookmark.domain.repository.ArticleBookMarkRepository
+import com.example.news.bookmark.data.local.ArticleBookmarkDao
+import com.example.news.bookmark.domain.repository.ArticleBookmarkRepository
 import com.example.news.core.domain.model.Article
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ArticleBookMarkRepositoryImpl @Inject constructor(
-    private val dao: ArticleBookMarkDao
-) : ArticleBookMarkRepository {
+class ArticleBookmarkRepositoryImpl @Inject constructor(
+    private val dao: ArticleBookmarkDao
+) : ArticleBookmarkRepository {
     override suspend fun upsert(article: Article) = dao.upsert(article)
 
     override suspend fun delete(article: Article) = dao.delete(article)
