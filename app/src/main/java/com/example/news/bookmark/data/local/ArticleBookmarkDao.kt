@@ -9,7 +9,7 @@ import com.example.news.core.domain.model.Article
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ArticleBookMarkDao {
+interface ArticleBookmarkDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(article: Article)
 

@@ -3,7 +3,7 @@ package com.example.news.bookmark.domain.repository
 import com.example.news.core.domain.model.Article
 import kotlinx.coroutines.flow.Flow
 
-interface ArticleBookMarkRepository {
+interface ArticleBookmarkRepository {
 
     suspend fun upsert(article: Article)
 

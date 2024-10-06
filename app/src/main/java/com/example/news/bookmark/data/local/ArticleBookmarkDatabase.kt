@@ -5,6 +5,6 @@ import androidx.room.RoomDatabase
 import com.example.news.core.domain.model.Article
 
 @Database(entities = [Article::class], version = 1)
-abstract class ArticleBookMarkDatabase:RoomDatabase() {
-    abstract val dao: ArticleBookMarkDao
+abstract class ArticleBookmarkDatabase : RoomDatabase() {
+    abstract val dao: ArticleBookmarkDao
 }
