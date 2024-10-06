@@ -1,5 +1,7 @@
 package com.example.news.details.presentation
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -36,14 +39,40 @@ fun DetailsScreen(
     navigateUp: () -> Unit,
 ) {
 
+
+    DisposableEffect(Unit) {
+        // Handle the final result of whether the item is bookmarked or not
+        // and modify the bookmark state in the data layer when the composable is disposed.
+        onDispose {
+            event.invoke(DetailsIntent.SaveFinalBookmarkInData)
+        }
+    }
+
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
     ) {
         DetailsTopBar(
-            onBrowsingClick = { event(DetailsIntent.OnBrowsingClick) },
-            onShareClick = { event(DetailsIntent.OnShareClick) },
+            isBookmarked = state.isBookmarked,
+            onBrowsingClick = {
+                state.article?.url?.let { url ->
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse(url)
+                    }
+                    context.startActivity(intent)
+                }
+            },
+            onShareClick = {
+                state.article?.url?.let { shareUrl ->
+                    val intent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, shareUrl)
+                    }
+                    context.startActivity(Intent.createChooser(intent, "Share via"))
+                }
+            },
             onBookmarkClick = { event(DetailsIntent.OnBookmarkClick) },
             onBackClick = navigateUp
         )
@@ -101,8 +130,6 @@ fun DetailsScreenPreview() {
     NewsTheme(dynamicColor = false) {
         DetailsScreen(
             state = DetailsState(
-                isLoading = false,
-                error = null,
                 article = Article(
                     author = "",
                     title = "Coinbase says Apple blocked its last app release on NFTs in Wallet ... - CryptoSaurus",
