@@ -25,6 +25,7 @@ import com.example.news.core.presentation.ui.theme.NewsTheme
 @Composable
 
 fun DetailsTopBar(
+    isBookmarked: Boolean = false,
     onBrowsingClick: () -> Unit,
     onShareClick: () -> Unit,
     onBookmarkClick: () -> Unit,
@@ -50,7 +51,8 @@ fun DetailsTopBar(
         actions = {
             IconButton(onClick = onBookmarkClick) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_bookmark),
+                    painter = if (isBookmarked) painterResource(R.drawable.ic_bookmark_true)
+                    else painterResource(R.drawable.ic_bookmark_false),
                     contentDescription = null
                 )
             }
