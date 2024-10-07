@@ -1,9 +1,6 @@
 package com.example.news.core.presentation.navgraph
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,8 +12,6 @@ import com.example.news.details.presentation.mvi.DetailsViewModel
 import com.example.news.home.presentation.HomeScreen
 import com.example.news.home.presentation.HomeViewModel
 import com.example.news.onboarding.presentation.OnBoardingScreen
-import com.example.news.search.presentation.SearchScreen
-import com.example.news.search.presentation.mvi.SearchViewModel
 
 @Composable
 fun NavGraph(

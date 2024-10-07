@@ -14,6 +14,28 @@ import com.example.news.core.util.Dimens.ExtraSmallPadding_6
 import com.example.news.core.util.Dimens.MediumPadding_24
 import com.example.news.core.domain.model.Article
 
+
+@Composable
+fun ArticlesList(
+    modifier: Modifier = Modifier,
+    articles: List<Article>,
+    onClick: (Article) -> Unit
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(MediumPadding_24),
+        contentPadding = PaddingValues(all = ExtraSmallPadding_6),
+    ) {
+        items(articles.size) { index ->
+            articles[index].let { article ->
+                ArticleCard(article = article, onClick = { onClick(article) })
+            }
+        }
+    }
+
+}
+
+
 @Composable
 fun ArticlesList(
     modifier: Modifier = Modifier,
@@ -27,11 +49,11 @@ fun ArticlesList(
             verticalArrangement = Arrangement.spacedBy(MediumPadding_24),
             contentPadding = PaddingValues(all = ExtraSmallPadding_6),
         ) {
-          items(articles.itemCount){index->
-              articles[index]?.let { article ->
-                  ArticleCard(article = article, onClick = {onClick(article)})
-              }
-          }
+            items(articles.itemCount) { index ->
+                articles[index]?.let { article ->
+                    ArticleCard(article = article, onClick = { onClick(article) })
+                }
+            }
 
         }
     }
