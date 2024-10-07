@@ -1,4 +1,4 @@
-package com.example.news.bookmark.data.local
+package com.example.news.core.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -9,12 +9,15 @@ import com.example.news.core.domain.model.Article
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ArticleBookmarkDao {
+interface NewsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(article: Article)
 
     @Delete
     suspend fun delete(article: Article)
+
+    @Query("SELECT * FROM Article WHERE isBookMarked = 1")
+    fun getBookMarkedArticles(): Flow<List<Article>>
 
     @Query("SELECT * FROM Article")
     fun getArticles(): Flow<List<Article>>
