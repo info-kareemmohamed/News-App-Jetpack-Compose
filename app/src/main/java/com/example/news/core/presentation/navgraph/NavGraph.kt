@@ -7,8 +7,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.example.news.bookmark.presentation.BookmarkScreen
-import com.example.news.bookmark.presentation.BookmarkViewModel
 import com.example.news.home.presentation.HomeScreen
 import com.example.news.home.presentation.HomeViewModel
 import com.example.news.onboarding.presentation.OnBoardingScreen
@@ -47,9 +45,10 @@ fun NavGraph(
 
 
 
+
             }
+
         }
 
     }
-
 }
