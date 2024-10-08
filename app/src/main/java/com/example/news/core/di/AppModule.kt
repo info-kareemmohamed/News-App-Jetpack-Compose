@@ -2,7 +2,6 @@ package com.example.news.core.di
 
 import android.app.Application
 import androidx.room.Room
-import com.example.news.bookmark.Constants.BOOKMARK_NAME_DB
 import com.example.news.core.data.local.NewsDao
 import com.example.news.core.data.local.NewsDatabase
 import com.example.news.core.data.repository.LocalUserAppEntryImpl
@@ -11,6 +10,7 @@ import com.example.news.core.util.Constants.BASE_URL
 import com.example.news.core.data.remote.NewsApi
 import com.example.news.core.data.repository.NewsRepositoryImpl
 import com.example.news.core.domain.repository.NewsRepository
+import com.example.news.core.util.Constants.DATABASE_NAME
 import com.example.news.onboarding.data.PageData
 import dagger.Module
 import dagger.Provides
@@ -52,7 +52,7 @@ object AppModule {
         return Room.databaseBuilder(
             context = application,
             klass = NewsDatabase::class.java,
-            name = BOOKMARK_NAME_DB,
+            name = DATABASE_NAME,
         ).build()
     }
 
