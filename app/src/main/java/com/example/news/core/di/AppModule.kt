@@ -1,12 +1,16 @@
 package com.example.news.core.di
 
 import android.app.Application
+import androidx.room.Room
+import com.example.news.core.data.local.NewsDao
+import com.example.news.core.data.local.NewsDatabase
 import com.example.news.core.data.repository.LocalUserAppEntryImpl
 import com.example.news.core.domain.repository.LocalUserAppEntry
 import com.example.news.core.util.Constants.BASE_URL
-import com.example.news.home.data.remote.NewsApi
-import com.example.news.home.data.repository.NewsRepositoryImpl
-import com.example.news.home.domain.repository.NewsRepository
+import com.example.news.core.data.remote.NewsApi
+import com.example.news.core.data.repository.NewsRepositoryImpl
+import com.example.news.core.domain.repository.NewsRepository
+import com.example.news.core.util.Constants.DATABASE_NAME
 import com.example.news.onboarding.data.PageData
 import dagger.Module
 import dagger.Provides
@@ -42,10 +46,29 @@ object AppModule {
     }
 
 
+    @Provides
+    @Singleton
+    fun provideArticleBookMarkDatabase(application: Application): NewsDatabase {
+        return Room.databaseBuilder(
+            context = application,
+            klass = NewsDatabase::class.java,
+            name = DATABASE_NAME,
+        ).build()
+    }
 
     @Provides
     @Singleton
-    fun provideNewsRepository(newsApi: NewsApi): NewsRepository = NewsRepositoryImpl(newsApi)
+    fun provideArticleBookMarkDao(newsDatabase: NewsDatabase) = newsDatabase.dao
+
+
+    @Provides
+    @Singleton
+    fun provideNewsRepository(
+        newsApi: NewsApi,
+        newsDao: NewsDao,
+        newsDatabase: NewsDatabase
+    ): NewsRepository =
+        NewsRepositoryImpl(newsApi, newsDatabase, newsDao)
 
 
 }

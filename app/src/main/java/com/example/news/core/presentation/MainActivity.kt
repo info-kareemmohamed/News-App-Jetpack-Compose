@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.news.core.presentation.navgraph.NavGraph
+import com.example.news.core.presentation.navigation.NavGraph
 import com.example.news.core.presentation.ui.theme.NewsTheme
 import com.example.news.core.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
