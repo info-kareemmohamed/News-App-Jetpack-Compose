@@ -32,7 +32,11 @@ import com.example.news.core.presentation.common.ArticlesList
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(articles: LazyPagingItems<Article>, navigate:(String) -> Unit) {
+fun HomeScreen(
+    articles: LazyPagingItems<Article>,
+    navigateToSearch: () -> Unit,
+    navigateToDetails: (articleUrl: String) -> Unit
+) {
 
     val titles by remember {
         derivedStateOf {
@@ -72,7 +76,7 @@ fun HomeScreen(articles: LazyPagingItems<Article>, navigate:(String) -> Unit) {
             onValueChange = {},
             onSearch = {},
             onClick = {
-                navigate(Route.SearchScreen.route)
+                navigateToSearch()
             }
         )
 
@@ -91,8 +95,8 @@ fun HomeScreen(articles: LazyPagingItems<Article>, navigate:(String) -> Unit) {
         ArticlesList(
             modifier = Modifier.padding(horizontal = MediumPadding_24),
             articles = articles,
-            onClick = {
-                //TODO: Navigate to Details Screen
+            onClick = { article ->
+                navigateToDetails(article.url)
             }
         )
     }
