@@ -23,7 +23,7 @@ class SearchForNewsPagingSource @Inject constructor(
         val page = params.key ?: 1
         return try {
             val newsResponse = newsApi.searchForNews(searchQuery, sources, page)
-            val articles = newsResponse.articles.map { it.toArticle() }
+            val articles = newsResponse.articles.map { it.toArticle(false) }
             LoadResult.Page(
                 data = articles,
                 nextKey = if (newsResponse.articles.isNotEmpty()) page + 1 else null,
