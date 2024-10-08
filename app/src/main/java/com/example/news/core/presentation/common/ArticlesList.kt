@@ -1,5 +1,6 @@
 package com.example.news.core.presentation.common
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,12 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.example.news.core.util.Dimens.ExtraSmallPadding_6
 import com.example.news.core.util.Dimens.MediumPadding_24
 import com.example.news.core.domain.model.Article
+import com.example.news.core.util.parseErrorMessage
 
 
 @Composable
@@ -79,8 +82,14 @@ fun handlePagingResult(
         }
 
         error != null -> {
-            EmptyScreen(error = error)
-            false
+            if (articles.itemCount > 0) {
+                Toast.makeText(LocalContext.current, parseErrorMessage(error), Toast.LENGTH_SHORT)
+                    .show()
+                true
+            } else {
+                EmptyScreen(error = error)
+                false
+            }
         }
 
         else -> true
