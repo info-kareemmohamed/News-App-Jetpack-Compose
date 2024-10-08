@@ -2,17 +2,15 @@ package com.example.news.core.di
 
 import android.app.Application
 import androidx.room.Room
-import com.example.news.bookmark.Constants.BOOKMARK_NAME_DB
-import com.example.news.bookmark.data.local.ArticleBookmarkDao
-import com.example.news.bookmark.data.local.ArticleBookmarkDatabase
-import com.example.news.bookmark.data.repository.ArticleBookmarkRepositoryImpl
-import com.example.news.bookmark.domain.repository.ArticleBookmarkRepository
+import com.example.news.core.data.local.NewsDao
+import com.example.news.core.data.local.NewsDatabase
 import com.example.news.core.data.repository.LocalUserAppEntryImpl
 import com.example.news.core.domain.repository.LocalUserAppEntry
 import com.example.news.core.util.Constants.BASE_URL
 import com.example.news.core.data.remote.NewsApi
 import com.example.news.core.data.repository.NewsRepositoryImpl
 import com.example.news.core.domain.repository.NewsRepository
+import com.example.news.core.util.Constants.DATABASE_NAME
 import com.example.news.onboarding.data.PageData
 import dagger.Module
 import dagger.Provides
@@ -50,27 +48,27 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideArticleBookMarkDatabase(application: Application): ArticleBookmarkDatabase {
+    fun provideArticleBookMarkDatabase(application: Application): NewsDatabase {
         return Room.databaseBuilder(
             context = application,
-            klass = ArticleBookmarkDatabase::class.java,
-            name = BOOKMARK_NAME_DB,
+            klass = NewsDatabase::class.java,
+            name = DATABASE_NAME,
         ).build()
     }
 
     @Provides
     @Singleton
-    fun provideArticleBookMarkDao(articleBookMarkDatabase: ArticleBookmarkDatabase) =
-        articleBookMarkDatabase.dao
+    fun provideArticleBookMarkDao(newsDatabase: NewsDatabase) = newsDatabase.dao
 
 
     @Provides
     @Singleton
-    fun provideNewsRepository(newsApi: NewsApi): NewsRepository = NewsRepositoryImpl(newsApi)
+    fun provideNewsRepository(
+        newsApi: NewsApi,
+        newsDao: NewsDao,
+        newsDatabase: NewsDatabase
+    ): NewsRepository =
+        NewsRepositoryImpl(newsApi, newsDatabase, newsDao)
 
-    @Provides
-    @Singleton
-    fun provideBookmarkRepository(articleBookmarkDao: ArticleBookmarkDao): ArticleBookmarkRepository =
-        ArticleBookmarkRepositoryImpl(articleBookmarkDao)
 
 }
