@@ -9,6 +9,7 @@ import com.example.news.core.data.local.NewsDao
 import com.example.news.core.data.local.NewsDatabase
 import com.example.news.core.data.mappers.toArticle
 import com.example.news.core.domain.model.Article
+import kotlinx.coroutines.flow.first
 
 
 @OptIn(ExperimentalPagingApi::class)
@@ -35,7 +36,7 @@ class NewsRemoteMediator(
 
             // Fetch data from API and database
             val newsResponse = newsApi.getNews(sources, page)
-            val bookMarkedArticles = newsDao.getNotBookMarkedArticles() // Get only once
+            val bookMarkedArticles = newsDao.getBookMarkedArticles().first()
 
             newsDb.withTransaction {
                 if (loadType == LoadType.REFRESH) {
@@ -43,9 +44,7 @@ class NewsRemoteMediator(
                 }
 
                 val articles = newsResponse.articles.map { article ->
-                    article.toArticle().copy(
-                        isBookMarked = bookMarkedArticles.any { it.url == article.url } // Set bookmark status
-                    )
+                    article.toArticle(bookMarkedArticles.any { it.url == article.url }) // Set bookmark status
                 }
 
                 // Insert new articles into the database

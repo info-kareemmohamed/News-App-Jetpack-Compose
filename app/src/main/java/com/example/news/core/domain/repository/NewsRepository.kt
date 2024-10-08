@@ -25,4 +25,7 @@ interface NewsRepository {
     suspend fun getArticleByUrl(url: String): Article?
 
     fun getBookMarkedArticles(): Flow<List<Article>>
+
+    suspend fun updateBookmarkStatus(url: String,isBookMarked: Boolean)
+
 }
