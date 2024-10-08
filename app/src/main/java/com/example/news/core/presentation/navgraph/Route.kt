@@ -1,6 +1,8 @@
 package com.example.news.core.presentation.navgraph
 
 import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 sealed class Route(
     val route: String,
@@ -14,7 +16,10 @@ sealed class Route(
 
     object BookmarkScreen : Route(route = "bookMarkScreen")
 
-    object DetailsScreen : Route(route = "detailsScreen")
+    object DetailsScreen :
+        Route(route = "detailsScreen/{articleUrl}", arguments = listOf(navArgument("articleUrl") {
+            type = NavType.StringType
+        }))
 
     object AppStartNavigation : Route(route = "appStartNavigation")
 

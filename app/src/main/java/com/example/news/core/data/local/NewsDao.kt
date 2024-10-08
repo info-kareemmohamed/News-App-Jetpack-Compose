@@ -27,6 +27,9 @@ interface NewsDao {
     @Query("SELECT * FROM Article")
     fun getArticles(): PagingSource<Int, Article>
 
+    @Query("UPDATE Article SET isBookMarked = :isBookMarked WHERE url = :url")
+    suspend fun updateBookmarkStatus(url: String,isBookMarked: Boolean)
+
     @Query("SELECT * FROM Article WHERE isBookMarked = 0")
     suspend fun getNotBookMarkedArticles(): List<Article>
 

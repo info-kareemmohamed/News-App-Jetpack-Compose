@@ -71,5 +71,8 @@ class NewsRepositoryImpl @Inject constructor(
 
     override fun getBookMarkedArticles(): Flow<List<Article>> = dao.getBookMarkedArticles()
 
+    override suspend fun updateBookmarkStatus(url: String, isBookMarked: Boolean) =
+        dao.updateBookmarkStatus(url, isBookMarked)
+
 
 }
