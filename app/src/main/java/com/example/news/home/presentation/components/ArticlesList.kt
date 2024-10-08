@@ -1,16 +1,24 @@
 package com.example.news.home.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.example.news.core.presentation.common.EmptyScreen
+import com.example.news.core.presentation.common.shimmerEffect
 import com.example.news.core.util.Dimens.ExtraSmallPadding_6
 import com.example.news.core.util.Dimens.MediumPadding_24
 import com.example.news.home.domain.model.Article
@@ -72,6 +80,15 @@ fun ArticlesListShimmerEffect() {
     Column(
         verticalArrangement = Arrangement.spacedBy(MediumPadding_24),
     ) {
+        Box (
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(20.dp)
+                .align(Alignment.CenterHorizontally)
+                .shimmerEffect()
+        )
+
+
         repeat(10) {
             ArticleCardShimmerEffect()
         }
