@@ -15,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.example.news.R
 import com.example.news.core.domain.model.Article
 import com.example.news.core.presentation.common.ArticlesList
-import com.example.news.core.presentation.navgraph.Route
+import com.example.news.core.presentation.navigation.Route
 import com.example.news.core.util.Dimens.MediumPadding_24
 
 
