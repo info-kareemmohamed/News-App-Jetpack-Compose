@@ -1,4 +1,4 @@
-package com.example.news.core.presentation.navgraph
+package com.example.news.core.presentation.navigation
 
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType

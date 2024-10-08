@@ -28,8 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import com.example.news.R
-import java.net.ConnectException
-import java.net.SocketTimeoutException
+import com.example.news.core.util.parseErrorMessage
 
 
 @Composable
@@ -43,7 +42,7 @@ fun EmptyScreen(error: LoadState.Error? = null) {
         mutableStateOf(R.drawable.ic_network_error)
     }
 
-    if (error == null){
+    if (error == null) {
         message = "You have not saved news so far !"
         icon = R.drawable.ic_search_document
     }
@@ -92,25 +91,9 @@ fun EmptyContent(alphaAnim: Float, message: String, iconId: Int) {
 }
 
 
-fun parseErrorMessage(error: LoadState.Error?): String {
-    return when (error?.error) {
-        is SocketTimeoutException -> {
-            "Server Unavailable."
-        }
-
-        is ConnectException -> {
-            "Internet Unavailable."
-        }
-
-        else -> {
-            "Unknown Error."
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun EmptyScreenPreview() {
-    EmptyContent(alphaAnim = 0.3f, message = "Internet Unavailable.",R.drawable.ic_network_error)
+    EmptyContent(alphaAnim = 0.3f, message = "Internet Unavailable.", R.drawable.ic_network_error)
 }

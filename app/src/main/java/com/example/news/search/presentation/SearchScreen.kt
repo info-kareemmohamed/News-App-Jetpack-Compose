@@ -11,7 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.news.core.presentation.common.ArticlesList
 import com.example.news.core.presentation.common.SearchBar
-import com.example.news.core.presentation.navgraph.Route
+
+
+
 import com.example.news.core.util.Dimens.MediumPadding_24
 import com.example.news.search.presentation.mvi.SearchIntent
 import com.example.news.search.presentation.mvi.SearchState
@@ -38,8 +40,8 @@ fun SearchScreen(
         Spacer(modifier = Modifier.height(MediumPadding_24))
 
         state.articles?.let { articles ->
-            ArticlesList(articles = articles.collectAsLazyPagingItems()) {
-                navigateToDetails(Route.DetailsScreen.route)
+            ArticlesList(articles = articles.collectAsLazyPagingItems()) { article ->
+                navigateToDetails(article.url)
             }
         }
 
