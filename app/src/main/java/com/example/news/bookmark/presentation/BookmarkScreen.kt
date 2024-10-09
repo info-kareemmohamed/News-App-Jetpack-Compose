@@ -41,7 +41,7 @@ fun BookmarkScreen(
 
         ArticlesList(
             articles = articles,
-            onClick = { navigate(Route.DetailsScreen.route) },
+            onClick = { article -> navigate(article.url) },
         )
     }
 

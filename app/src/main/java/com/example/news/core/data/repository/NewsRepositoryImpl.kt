@@ -8,10 +8,11 @@ import androidx.paging.PagingSource
 import com.example.news.core.data.local.NewsDao
 import com.example.news.core.data.local.NewsDatabase
 import com.example.news.core.data.remote.NewsApi
-import com.example.news.core.data.remote.NewsRemoteMediator
-import com.example.news.core.data.remote.SearchForNewsPagingSource
+import com.example.news.core.data.NewsRemoteMediator
 import com.example.news.core.domain.model.Article
+import com.example.news.core.domain.model.SourceType
 import com.example.news.core.domain.repository.NewsRepository
+import com.example.news.core.util.Constants.PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -23,15 +24,20 @@ class NewsRepositoryImpl @Inject constructor(
 ) : NewsRepository {
     override fun getNews(sources: List<String>): Flow<PagingData<Article>> {
         return Pager(
-            config = PagingConfig(pageSize = 15),
+            config = PagingConfig(PAGE_SIZE),
             remoteMediator = NewsRemoteMediator(
-                newsApi = newsApi,
+                newsApiCall = {
+                    newsApi.getNews(
+                        sources = sources.joinToString(separator = ","),
+                        page = it
+                    )
+                },
+                sourceType = SourceType.HOME,
                 newsDao = dao,
-                sources = sources.joinToString(separator = ","),
                 newsDb = newsDb
             ),
             pagingSourceFactory = {
-                dao.getArticles()
+                dao.getArticles(sourceType = SourceType.HOME)
             }
         ).flow
     }
@@ -42,21 +48,29 @@ class NewsRepositoryImpl @Inject constructor(
         searchQuery: String
     ): Flow<PagingData<Article>> {
         return Pager(
-            config = PagingConfig(15),
+            config = PagingConfig(pageSize = PAGE_SIZE),
+            remoteMediator = NewsRemoteMediator(
+                newsApiCall = {
+                    newsApi.searchForNews(
+                        searchQuery = searchQuery,
+                        sources = sources.joinToString(separator = ","),
+                        page = it
+                    )
+                },
+                sourceType = SourceType.SEARCH,
+                newsDao = dao,
+                newsDb = newsDb
+            ),
             pagingSourceFactory = {
-                SearchForNewsPagingSource(
-                    newsApi = newsApi,
-                    sources = sources.joinToString(separator = ","),
-                    searchQuery = searchQuery
-                )
+                dao.getArticles(sourceType = SourceType.SEARCH)
             }
         ).flow
-
     }
 
-    override suspend fun getArticles(): PagingSource<Int, Article> = dao.getArticles()
+    override suspend fun getArticles(sourceType: SourceType): PagingSource<Int, Article> =
+        dao.getArticles(sourceType)
 
-    override suspend fun clearArticlesIsNotBookMarked() = dao.clearArticlesIsNotBookMarked()
+    override suspend fun clearArticles(sourceType: SourceType) = dao.clearArticles(sourceType)
 
     override suspend fun getNotBookMarkedArticles(): List<Article> = dao.getNotBookMarkedArticles()
 
@@ -71,8 +85,15 @@ class NewsRepositoryImpl @Inject constructor(
 
     override fun getBookMarkedArticles(): Flow<List<Article>> = dao.getBookMarkedArticles()
 
-    override suspend fun updateBookmarkStatus(url: String, isBookMarked: Boolean) =
-        dao.updateBookmarkStatus(url, isBookMarked)
+    override fun getBookMarkedArticlesForBookmark(sourceType: SourceType): Flow<List<Article>> =
+        dao.getBookMarkedArticlesForBookmark(sourceType)
+
+    override suspend fun updateBookmarkStatus(
+        url: String,
+        isBookMarked: Boolean,
+        sourceType: SourceType
+    ) =
+        dao.updateBookmarkStatus(url, isBookMarked, sourceType)
 
 
 }

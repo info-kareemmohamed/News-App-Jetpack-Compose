@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.news.core.domain.model.SourceType
+import com.example.news.details.domain.usecase.DeleteArticleUseCase
 import com.example.news.details.domain.usecase.GetArticleByUrlUseCase
 import com.example.news.details.domain.usecase.UpdateBookmarkStatusUseCase
 import com.example.news.details.domain.usecase.UpsertArticleUseCase
@@ -17,8 +19,9 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val updateBookmarkStatusUseCase: UpdateBookmarkStatusUseCase,
-    private val getArticleByUrlUseCase: GetArticleByUrlUseCase
+    private val upsertArticleUseCase: UpsertArticleUseCase,
+    private val getArticleByUrlUseCase: GetArticleByUrlUseCase,
+    private val deleteArticleUseCase: DeleteArticleUseCase,
 ) : ViewModel() {
     private val _state = mutableStateOf(DetailsState())
     val state: State<DetailsState> = _state
@@ -40,19 +43,25 @@ class DetailsViewModel @Inject constructor(
 
 
     private fun saveFinalBookmark() {
-        _state.value.article?.takeIf { it.isBookMarked != _state.value.isBookmarked }?.let { article ->
-            viewModelScope.launch {
-                updateBookmarkStatusUseCase(article.url, _state.value.isBookmarked)
+        _state.value.article?.takeIf { it.isBookMarked != _state.value.isBookmarked }
+            ?.let { article ->
+                viewModelScope.launch {
+                    if (_state.value.isBookmarked)
+                        upsertArticleUseCase(article.copy(isBookMarked = true, sourceType = SourceType.BOOKMARK))
+                    else deleteArticleUseCase(article)
+                }
             }
-        }
     }
 
 
     private fun loadArticle() {
         viewModelScope.launch {
             savedStateHandle.get<String>("articleUrl")?.let { Uri.decode(it) }?.let { articleUrl ->
+                println("articleUrl: $articleUrl")
                 getArticleByUrlUseCase(articleUrl)?.let { article ->
-                    _state.value = _state.value.copy(article = article, isBookmarked = article.isBookMarked)
+                    println("article: $article")
+                    _state.value =
+                        _state.value.copy(article = article, isBookmarked = article.isBookMarked)
                 }
             }
         }

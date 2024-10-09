@@ -3,16 +3,17 @@ package com.example.news.core.domain.repository
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.example.news.core.domain.model.Article
+import com.example.news.core.domain.model.SourceType
 import kotlinx.coroutines.flow.Flow
 
 interface NewsRepository {
     fun getNews(sources: List<String>): Flow<PagingData<Article>>
 
-    suspend fun getArticles(): PagingSource<Int, Article>
+    suspend fun getArticles(sourceType: SourceType): PagingSource<Int, Article>
 
     suspend fun getNotBookMarkedArticles(): List<Article>
 
-    suspend fun clearArticlesIsNotBookMarked()
+    suspend fun clearArticles(sourceType: SourceType)
 
     fun searchForNews(sources: List<String>, searchQuery: String): Flow<PagingData<Article>>
 
@@ -26,6 +27,9 @@ interface NewsRepository {
 
     fun getBookMarkedArticles(): Flow<List<Article>>
 
-    suspend fun updateBookmarkStatus(url: String,isBookMarked: Boolean)
+    fun getBookMarkedArticlesForBookmark(sourceType: SourceType): Flow<List<Article>>
+
+
+    suspend fun updateBookmarkStatus(url: String, isBookMarked: Boolean, sourceType: SourceType)
 
 }

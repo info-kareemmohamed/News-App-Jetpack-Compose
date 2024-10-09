@@ -24,6 +24,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.news.R
 import com.example.news.core.domain.model.Article
+import com.example.news.core.domain.model.SourceType
 import com.example.news.core.presentation.ui.theme.NewsTheme
 import com.example.news.core.util.Dimens.ArticleImageHeight
 import com.example.news.core.util.Dimens.ExtraSmallPadding_3
@@ -138,7 +139,9 @@ fun DetailsScreenPreview() {
                     publishedAt = "2023-06-16T22:24:33Z",
                     sourceName = "BBS",
                     url = "https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiaWh0dHBzOi8vY3J5cHRvc2F1cnVzLnRlY2gvY29pbmJhc2Utc2F5cy1hcHBsZS1ibG9ja2VkLWl0cy1sYXN0LWFwcC1yZWxlYXNlLW9uLW5mdHMtaW4td2FsbGV0LXJldXRlcnMtY29tL9IBAA?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1",
-                    urlToImage = "https://media.wired.com/photos/6495d5e893ba5cd8bbdc95af/191:100/w_1280,c_limit/The-EU-Rules-Phone-Batteries-Must-Be-Replaceable-Gear-2BE6PRN.jpg"
+                    urlToImage = "https://media.wired.com/photos/6495d5e893ba5cd8bbdc95af/191:100/w_1280,c_limit/The-EU-Rules-Phone-Batteries-Must-Be-Replaceable-Gear-2BE6PRN.jpg",
+                    isBookMarked = false,
+                    sourceType = SourceType.HOME
                 ),
             ),
             event = {},

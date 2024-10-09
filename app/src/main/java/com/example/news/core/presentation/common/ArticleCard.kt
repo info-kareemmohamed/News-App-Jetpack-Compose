@@ -33,6 +33,7 @@ import com.example.news.core.util.Dimens.ArticleCardSize
 import com.example.news.core.util.Dimens.ExtraSmallPadding_3
 import com.example.news.core.util.Dimens.ExtraSmallPadding_6
 import com.example.news.core.domain.model.Article
+import com.example.news.core.domain.model.SourceType
 
 
 @Composable
@@ -117,7 +118,9 @@ fun ArticleCardPreview() {
                 sourceName = "BBC News",
                 title = "Her train broke down. Her phone died. And then she met her Saver in a",
                 url = "",
-                urlToImage = "https://ichef.bbci.co.uk/live-experience/cps/624/cpsprodpb/11787/production/_124395517_bbcbreakingnewsgraphic.jpg"
+                urlToImage = "https://ichef.bbci.co.uk/live-experience/cps/624/cpsprodpb/11787/production/_124395517_bbcbreakingnewsgraphic.jpg",
+                isBookMarked = false,
+                sourceType = SourceType.HOME
             )
         ) {}
     }
