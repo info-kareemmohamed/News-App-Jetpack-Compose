@@ -17,14 +17,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.news.R
 import com.example.news.bookmark.presentation.BookmarkScreen
 import com.example.news.bookmark.presentation.BookmarkViewModel
 import com.example.news.details.presentation.DetailsScreen
 import com.example.news.details.presentation.mvi.DetailsViewModel
 import com.example.news.home.presentation.HomeScreen
-import com.example.news.home.presentation.HomeViewModel
 import com.example.news.search.presentation.SearchScreen
 import com.example.news.search.presentation.mvi.SearchViewModel
 
@@ -83,10 +81,7 @@ fun NewsNavigator() {
             modifier = Modifier.padding(bottom = bottomPadding)
         ) {
             composable(Route.HomeScreen.route) {
-                val viewModel: HomeViewModel = hiltViewModel()
-                val articles = viewModel.news.collectAsLazyPagingItems()
                 HomeScreen(
-                    articles = articles,
                     navigateToSearch = {
                         navigateToTab(navController, Route.SearchScreen.route)
                     },
