@@ -1,13 +1,13 @@
 package com.example.news.core.presentation.navigation
 
 import android.net.Uri
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -47,21 +47,32 @@ fun NewsNavigator() {
         Route.BookmarkScreen.route -> 2
         else -> 0
     }
+    // Determine if the bottom bar should be visible based on the current route
+    val isBottomBarVisible = remember(backStackEntry) {
+        backStackEntry?.destination?.route in listOf(
+            Route.HomeScreen.route,
+            Route.SearchScreen.route,
+            Route.BookmarkScreen.route
+        )
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            NewsBottomNavigation(
-                selected = selectedItem,
-                icons = bottomNavigationItems,
-                onItemClick = { index ->
-                    when (index) {
-                        0 -> navigateToTab(navController, Route.HomeScreen.route)
-                        1 -> navigateToTab(navController, Route.SearchScreen.route)
-                        2 -> navigateToTab(navController, Route.BookmarkScreen.route)
-                    }
+            if (isBottomBarVisible) {
+                NewsBottomNavigation(
+                    selected = selectedItem,
+                    icons = bottomNavigationItems,
+                    onItemClick = { index ->
+                        when (index) {
+                            0 -> navigateToTab(navController, Route.HomeScreen.route)
+                            1 -> navigateToTab(navController, Route.SearchScreen.route)
+                            2 -> navigateToTab(navController, Route.BookmarkScreen.route)
+                        }
 
-                })
+                    })
+
+            }
         }
     ) {
         val bottomPadding = it.calculateBottomPadding()
@@ -98,7 +109,7 @@ fun NewsNavigator() {
             ) {
                 val viewModel: DetailsViewModel = hiltViewModel()
                 DetailsScreen(state = viewModel.state.value, event = viewModel::onIntent) {
-                        navController.navigateUp()
+                    navController.navigateUp()
                 }
             }
 
@@ -113,7 +124,6 @@ fun NewsNavigator() {
 
 
 }
-
 
 
 private fun navigateToDetails(navController: NavController, articleUrl: String) {

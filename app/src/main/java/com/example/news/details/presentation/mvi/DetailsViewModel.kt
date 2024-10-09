@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.news.core.domain.model.SourceType
 import com.example.news.details.domain.usecase.DeleteArticleUseCase
 import com.example.news.details.domain.usecase.GetArticleByUrlUseCase
-import com.example.news.details.domain.usecase.UpdateBookmarkStatusUseCase
 import com.example.news.details.domain.usecase.UpsertArticleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -57,9 +56,7 @@ class DetailsViewModel @Inject constructor(
     private fun loadArticle() {
         viewModelScope.launch {
             savedStateHandle.get<String>("articleUrl")?.let { Uri.decode(it) }?.let { articleUrl ->
-                println("articleUrl: $articleUrl")
                 getArticleByUrlUseCase(articleUrl)?.let { article ->
-                    println("article: $article")
                     _state.value =
                         _state.value.copy(article = article, isBookmarked = article.isBookMarked)
                 }
