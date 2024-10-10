@@ -70,6 +70,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.androidx.core.splashscreen)
+    implementation ("androidx.compose.material:material-icons-extended:1.7.3")
+
 
     implementation ("androidx.navigation:navigation-compose:2.8.2")
 
