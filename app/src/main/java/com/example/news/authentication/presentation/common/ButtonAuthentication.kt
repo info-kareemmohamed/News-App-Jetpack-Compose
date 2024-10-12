@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.example.news.core.util.Dimens
 
 @Composable
-fun ButtonAuthentication(text: String,onClick: () -> Unit) {
+fun ButtonAuthentication(text: String, loading: Boolean = false, onClick: () -> Unit) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
@@ -27,10 +27,14 @@ fun ButtonAuthentication(text: String,onClick: () -> Unit) {
         ),
         onClick = onClick
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = White,
-        )
+        if (loading) {
+            LoadingAnimation()
+        } else {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                color = White,
+            )
+        }
     }
 }
