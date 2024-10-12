@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.example.news.core.presentation.ui.theme.DarkRed
 
 
 @Composable
@@ -21,6 +22,7 @@ fun PasswordField(
     value: String,
     visibility: Boolean,
     label: String = "Password",
+    error: String? = null,
     onVisibilityChange: (Boolean) -> Unit,
     onValueChange: (String) -> Unit
 ) {
@@ -32,7 +34,10 @@ fun PasswordField(
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             focusedLabelColor = MaterialTheme.colorScheme.primary,
+            errorBorderColor = DarkRed,
+            errorLabelColor = DarkRed,
         ),
+        isError = error != null,
         trailingIcon = {
             IconButton(
                 onClick = { onVisibilityChange(!visibility) }
