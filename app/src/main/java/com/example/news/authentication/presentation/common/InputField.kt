@@ -7,9 +7,10 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.example.news.core.presentation.ui.theme.DarkRed
 
 @Composable
-fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
+fun InputField(label: String, value: String, error: String?= null, onValueChange: (String) -> Unit) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -18,6 +19,9 @@ fun InputField(label: String, value: String, onValueChange: (String) -> Unit) {
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             focusedLabelColor = MaterialTheme.colorScheme.primary,
-        )
+            errorBorderColor = DarkRed,
+            errorLabelColor = DarkRed,
+            ),
+        isError = error != null,
     )
 }
