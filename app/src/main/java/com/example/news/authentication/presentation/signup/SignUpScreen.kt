@@ -9,36 +9,44 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.news.R
 import com.example.news.authentication.presentation.common.AuthClickableText
 import com.example.news.authentication.presentation.common.ButtonAuthentication
 import com.example.news.authentication.presentation.common.ConnectionOptions
+import com.example.news.authentication.presentation.common.ErrorText
 import com.example.news.authentication.presentation.common.PasswordField
 import com.example.news.authentication.presentation.common.InputField
+import com.example.news.authentication.presentation.signup.mvi.SignUpIntent
+import com.example.news.authentication.presentation.signup.mvi.SignUpViewModel
 import com.example.news.core.presentation.ui.theme.NewsTheme
 import com.example.news.core.util.Dimens
+import com.example.news.core.util.Dimens.ExtraSmallPadding_10
 import com.example.news.core.util.Dimens.MediumPadding_20
-import com.example.news.core.util.Dimens.MediumPadding_24
 import com.example.news.core.util.Dimens.MediumPadding_30
 
 @Composable
-fun SignUpScreen() {
-    var username by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var passordVisibility by remember { mutableStateOf(false) }
-    var confirmPasswordVisibility by remember { mutableStateOf(false) }
+fun SignUpScreen(
+    viewModel: SignUpViewModel = hiltViewModel(),
+    navigateToLoginScreen: () -> Unit,
+    navigateToHomeScreen: () -> Unit
+) {
+    val state = viewModel.signUpState.collectAsState().value
+
+    LaunchedEffect(viewModel.signUpSuccessfully) {
+        viewModel.signUpSuccessfully.collect {
+            if (it) navigateToHomeScreen()
+        }
+
+    }
 
     Column(
         modifier = Modifier
@@ -49,38 +57,64 @@ fun SignUpScreen() {
 
         Spacer(modifier = Modifier.height(MediumPadding_30))
 
-        InputField(label = "Username", username) { username = it }
+        InputField(
+            label = "User Name",
+            value = state.username,
+            state.usernameErrorMessage
+        ) { viewModel.onIntent(SignUpIntent.UsernameChanged(it)) }
+        ErrorText(error = state.usernameErrorMessage)
 
-        Spacer(modifier = Modifier.height(MediumPadding_24))
+        Spacer(modifier = Modifier.height(ExtraSmallPadding_10))
 
-        InputField(label = "Email", email) { email = it }
+        InputField(label = "Email", state.email, state.emailErrorMessage) {
+            viewModel.onIntent(
+                SignUpIntent.EmailChanged(it)
+            )
+        }
 
-        Spacer(modifier = Modifier.height(MediumPadding_24))
+        ErrorText(error = state.emailErrorMessage)
+
+        Spacer(modifier = Modifier.height(ExtraSmallPadding_10))
 
         PasswordField(
-            value = password,
-            visibility = passordVisibility,
-            onVisibilityChange = {passordVisibility =it},
-            onValueChange = { password = it })
+            value = state.password,
+            visibility = state.isPasswordVisible,
+            error = state.passwordErrorMessage,
+            onVisibilityChange = { viewModel.onIntent(SignUpIntent.PasswordVisibilityChanged(it)) },
+            onValueChange = { viewModel.onIntent(SignUpIntent.PasswordChanged(it)) })
+        ErrorText(error = state.passwordErrorMessage)
 
-        Spacer(modifier = Modifier.height(MediumPadding_24))
+        Spacer(modifier = Modifier.height(ExtraSmallPadding_10))
 
         PasswordField(
             label = "Confirm Password",
-            value = confirmPassword,
-            visibility = confirmPasswordVisibility,
-            onVisibilityChange = { confirmPasswordVisibility = it },
-            onValueChange = { confirmPassword = it })
+            value = state.confirmPassword,
+            visibility = state.isConfirmPasswordVisible,
+            error = state.confirmPasswordErrorMessage,
+            onVisibilityChange = {
+                viewModel.onIntent(
+                    SignUpIntent.ConfirmPasswordVisibilityChanged(
+                        it
+                    )
+                )
+            },
+            onValueChange = { viewModel.onIntent(SignUpIntent.ConfirmPasswordChanged(it)) })
+        ErrorText(error = state.confirmPasswordErrorMessage)
 
-        Spacer(modifier = Modifier.height(MediumPadding_24))
+        Spacer(modifier = Modifier.height(ExtraSmallPadding_10))
 
-        ButtonAuthentication("SignUp") {}
+        ButtonAuthentication("SignUp",state.isLoading) {
+            viewModel.onIntent(SignUpIntent.Submit)
+        }
+        ErrorText(error = state.errorMessage)
 
         ConnectionOptions(modifier = Modifier.align(Alignment.CenterHorizontally)) {}
-        AuthClickableText("Already have an account ?", " Login") {}
+        AuthClickableText("Already have an account ?", " Login") {
+            navigateToLoginScreen()
+        }
     }
-}
 
+}
 @Composable
 fun GreetingText() {
     Text(
@@ -104,6 +138,9 @@ fun GreetingText() {
 @Composable
 fun SignUpScreenPreview() {
     NewsTheme {
-        SignUpScreen()
+        SignUpScreen(
+            navigateToLoginScreen = {},
+            navigateToHomeScreen = {}
+        )
     }
 }
