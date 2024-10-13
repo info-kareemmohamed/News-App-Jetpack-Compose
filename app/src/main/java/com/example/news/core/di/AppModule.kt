@@ -2,6 +2,8 @@ package com.example.news.core.di
 
 import android.app.Application
 import androidx.room.Room
+import com.example.news.authentication.data.repository.AuthRepositoryImpl
+import com.example.news.authentication.domain.repository.AuthRepository
 import com.example.news.core.data.local.NewsDao
 import com.example.news.core.data.local.NewsDatabase
 import com.example.news.core.data.repository.LocalUserAppEntryImpl
@@ -12,6 +14,7 @@ import com.example.news.core.data.repository.NewsRepositoryImpl
 import com.example.news.core.domain.repository.NewsRepository
 import com.example.news.core.util.Constants.DATABASE_NAME
 import com.example.news.onboarding.data.PageData
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,6 +48,15 @@ object AppModule {
             .create(NewsApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(firebaseAuth: FirebaseAuth): AuthRepository {
+        return AuthRepositoryImpl(firebaseAuth)
+    }
 
     @Provides
     @Singleton

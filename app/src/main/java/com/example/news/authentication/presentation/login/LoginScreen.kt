@@ -38,9 +38,9 @@ fun LoginScreen(
     val state = viewModel.loginState.collectAsState()
 
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel.loginSuccessfully) {
         viewModel.loginSuccessfully.collect {
-            navigateToHomeScreen()
+            if (it) navigateToHomeScreen()
         }
     }
 
