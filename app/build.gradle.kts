@@ -71,7 +71,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
+    implementation ("com.google.android.gms:play-services-auth:21.2.0") // For Google Sign-In
     implementation(libs.androidx.core.splashscreen)
     implementation ("androidx.compose.material:material-icons-extended:1.7.3")
 

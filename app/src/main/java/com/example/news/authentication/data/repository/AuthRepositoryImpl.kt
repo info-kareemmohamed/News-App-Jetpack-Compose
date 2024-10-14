@@ -9,61 +9,75 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import com.google.firebase.auth.AuthCredential
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
 ) : AuthRepository {
+
     override fun login(email: String, password: String): Flow<AuthResult<User>> = flow {
-        emit(AuthResult.Loading()) // Emit loading state
-        val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-        val uid = authResult.user?.uid
-
-        // Retrieve the user document from Firestore
-        val db = FirebaseFirestore.getInstance()
-        val documentSnapshot = db.collection("users")
-            .document(uid.toString())
-            .get()
-            .await()
-
-        val user = if (documentSnapshot.exists()) {
-            documentSnapshot.toObject(User::class.java)
-        } else {
-            null
-        }
-
+        emit(AuthResult.Loading())
+        val uid = firebaseAuth.signInWithEmailAndPassword(email, password).await().user?.uid
+        val user = getUserFromFirestore(uid.toString())
         emit(AuthResult.Success(user))
-    }.catch { e ->
-        emit(AuthResult.Error(e.message ?: "An unknown error occurred")) // Handle exceptions
-    }
+    }.catch { emit(AuthResult.Error(it.message ?: "An unknown error occurred")) }
 
 
-    override fun signup(username: String, email: String, password: String): Flow<AuthResult<User>> = flow {
-        emit(AuthResult.Loading()) // Emit loading state
-
-        try {
-            // Create user in Firebase Authentication
-            val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-            val uid = authResult.user?.uid ?: throw Exception("UID is null")
-
-            // Create a user document in Firestore
-            val db = FirebaseFirestore.getInstance()
-
-            //Create a User object
+    override fun signup(username: String, email: String, password: String): Flow<AuthResult<User>> =
+        flow {
+            emit(AuthResult.Loading())
+            val uid = firebaseAuth.createUserWithEmailAndPassword(email, password).await().user?.uid
+                ?: throw Exception("UID is null")
             val user = User(uid, email, username)
-
-            // Save the user data in the "users" collection with UID as the document ID
-            db.collection("users")
-                .document(uid)
-                .set(user)
-                .await() // Wait for the Firestore operation to complete
-
-            // Emit success with the created user object
+            saveUserToFirestore(user, uid)
             emit(AuthResult.Success(user))
-        } catch (e: Exception) {
-            // Emit error in case of failure
-            emit(AuthResult.Error(e.message ?: "An unknown error occurred"))
+        }.catch { emit(AuthResult.Error(it.message ?: "An unknown error occurred")) }
+
+
+    override fun forgotPassword(email: String): Flow<AuthResult<String>> = flow {
+        emit(AuthResult.Loading())
+        firebaseAuth.sendPasswordResetEmail(email).await()
+        emit(AuthResult.Success("Password reset email sent successfully"))
+    }.catch { emit(AuthResult.Error(it.message ?: "An unknown error occurred")) }
+
+
+    override fun googleSignIn(credential: AuthCredential): Flow<AuthResult<User>> = flow {
+        emit(AuthResult.Loading())
+        val user = firebaseAuth.signInWithCredential(credential).await().user
+            ?: throw Exception("User is null")
+        val existingUser = getUserFromFirestore(user.uid) ?: User(
+            user.uid,
+            user.email.orEmpty(),
+            user.displayName.orEmpty()
+        ).also {
+            saveUserToFirestore(it, user.uid)
         }
+        emit(AuthResult.Success(existingUser))
+    }.catch { emit(AuthResult.Error(it.message ?: "An unknown error occurred")) }
+
+
+    override suspend fun getSignedInUser(): User? {
+        val uid = firebaseAuth.currentUser?.uid ?: return null
+        return getUserFromFirestore(uid)
     }
+
+    override fun signOut(): Flow<AuthResult<String>> = flow {
+        emit(AuthResult.Loading())
+        firebaseAuth.signOut()
+        emit(AuthResult.Success("Sign out successful"))
+    }.catch { emit(AuthResult.Error(it.message ?: "An unknown error occurred")) }
+
+
+    private suspend fun getUserFromFirestore(uid: String): User? {
+        return firestore.collection("users").document(uid).get().await().toObject(User::class.java)
+    }
+
+
+    private suspend fun saveUserToFirestore(user: User, uid: String) {
+        firestore.collection("users").document(uid).set(user).await()
+    }
+
 
 }
