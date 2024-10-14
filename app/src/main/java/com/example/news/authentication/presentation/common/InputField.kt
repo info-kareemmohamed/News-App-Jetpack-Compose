@@ -22,6 +22,7 @@ fun InputField(label: String, value: String, error: String?= null, onValueChange
             errorBorderColor = DarkRed,
             errorLabelColor = DarkRed,
             ),
+        singleLine = true,
         isError = error != null,
     )
 }
