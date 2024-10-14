@@ -15,6 +15,7 @@ import com.example.news.core.domain.repository.NewsRepository
 import com.example.news.core.util.Constants.DATABASE_NAME
 import com.example.news.onboarding.data.PageData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -54,8 +55,15 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(firebaseAuth: FirebaseAuth): AuthRepository {
-        return AuthRepositoryImpl(firebaseAuth)
+    fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore
+    ): AuthRepository {
+        return AuthRepositoryImpl(firebaseAuth, firestore)
     }
 
     @Provides

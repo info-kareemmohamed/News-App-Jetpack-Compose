@@ -23,7 +23,11 @@ import com.example.news.core.presentation.ui.theme.LightGrayColor
 import com.example.news.core.util.Dimens
 
 @Composable
-fun ConnectionOptions(modifier: Modifier = Modifier,onConnect: () -> Unit) {
+fun ConnectionOptions(
+    modifier: Modifier = Modifier,
+    isGoogle: Boolean = false,
+    onConnect: () -> Unit
+) {
     Text(
         modifier = modifier,
         text = "or connect with",
@@ -42,7 +46,7 @@ fun ConnectionOptions(modifier: Modifier = Modifier,onConnect: () -> Unit) {
             containerColor = LightGrayColor,
             contentColor = Color.Transparent
         ),
-        onClick = {onConnect()}
+        onClick = { onConnect() }
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_google),
@@ -50,10 +54,13 @@ fun ConnectionOptions(modifier: Modifier = Modifier,onConnect: () -> Unit) {
             tint = Color.Unspecified
         )
         Spacer(modifier = Modifier.width(Dimens.ExtraSmallPadding_6))
-        Text(
-            text = "Google",
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = BlueGray
-        )
+        if (!isGoogle)
+            Text(
+                text = "Google",
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                color = BlueGray
+            )
+        else
+            LoadingAnimation(circleColor= BlueGray)
     }
 }

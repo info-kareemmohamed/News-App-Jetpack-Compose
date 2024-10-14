@@ -1,6 +1,8 @@
 package com.example.news.authentication.presentation.signup
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,6 +28,8 @@ import com.example.news.authentication.presentation.common.ConnectionOptions
 import com.example.news.authentication.presentation.common.ErrorText
 import com.example.news.authentication.presentation.common.PasswordField
 import com.example.news.authentication.presentation.common.InputField
+import com.example.news.authentication.presentation.common.createGoogleSignInOptions
+import com.example.news.authentication.presentation.common.handleGoogleSignInResult
 import com.example.news.authentication.presentation.signup.mvi.SignUpIntent
 import com.example.news.authentication.presentation.signup.mvi.SignUpViewModel
 import com.example.news.core.presentation.ui.theme.NewsTheme
@@ -32,6 +37,7 @@ import com.example.news.core.util.Dimens
 import com.example.news.core.util.Dimens.ExtraSmallPadding_10
 import com.example.news.core.util.Dimens.MediumPadding_20
 import com.example.news.core.util.Dimens.MediumPadding_30
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 @Composable
 fun SignUpScreen(
@@ -40,7 +46,15 @@ fun SignUpScreen(
     navigateToHomeScreen: () -> Unit
 ) {
     val state = viewModel.signUpState.collectAsState().value
+    val context = LocalContext.current
 
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        handleGoogleSignInResult(it) { credential ->
+            viewModel.onIntent(SignUpIntent.GoogleSignInClicked(credential))
+        }
+    }
     LaunchedEffect(viewModel.signUpSuccessfully) {
         viewModel.signUpSuccessfully.collect {
             if (it) navigateToHomeScreen()
@@ -103,18 +117,26 @@ fun SignUpScreen(
 
         Spacer(modifier = Modifier.height(ExtraSmallPadding_10))
 
-        ButtonAuthentication("SignUp",state.isLoading) {
+        ButtonAuthentication("SignUp", state.isLoading) {
             viewModel.onIntent(SignUpIntent.Submit)
         }
         ErrorText(error = state.errorMessage)
 
-        ConnectionOptions(modifier = Modifier.align(Alignment.CenterHorizontally)) {}
+        ConnectionOptions(
+            isGoogle = state.isLoadingGoogle,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            val googleSignInClient = GoogleSignIn.getClient(context, createGoogleSignInOptions())
+            launcher.launch(googleSignInClient.signInIntent)
+
+        }
         AuthClickableText("Already have an account ?", " Login") {
             navigateToLoginScreen()
         }
     }
 
 }
+
 @Composable
 fun GreetingText() {
     Text(

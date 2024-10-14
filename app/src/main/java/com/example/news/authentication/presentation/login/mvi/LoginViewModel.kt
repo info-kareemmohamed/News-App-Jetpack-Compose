@@ -3,9 +3,12 @@ package com.example.news.authentication.presentation.login.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.authentication.domain.AuthResult
+import com.example.news.authentication.domain.repository.AuthRepository
+import com.example.news.authentication.domain.usecase.GoogleSignInUseCase
 import com.example.news.authentication.domain.usecase.LoginUseCase
 import com.example.news.authentication.domain.usecase.ValidateEmailUseCase
 import com.example.news.authentication.domain.usecase.ValidatePasswordUseCase
+import com.google.firebase.auth.AuthCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
+    private val googleSignInUseCase: GoogleSignInUseCase,
+    private val authRepository: AuthRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase
 ) : ViewModel() {
@@ -34,7 +39,12 @@ class LoginViewModel @Inject constructor(
             is LoginIntent.VisibilityChanged -> updateState(isPasswordVisible = intent.isVisible)
             is LoginIntent.RememberMeChanged -> updateState(isRememberMeChecked = intent.isChecked)
             LoginIntent.LoginClicked -> login()
+            is LoginIntent.GoogleSignInClicked -> googleSignIn(intent.credential)
         }
+    }
+
+     fun signOut(){
+        authRepository.signOut()
     }
 
     private fun updateState(
@@ -69,7 +79,11 @@ class LoginViewModel @Inject constructor(
                         isLoading = false
                     )
 
-                    is AuthResult.Loading -> _loginState.value.copy(isLoading = true, errorMessage = null)
+                    is AuthResult.Loading -> _loginState.value.copy(
+                        isLoading = true,
+                        errorMessage = null
+                    )
+
                     is AuthResult.Success -> {
                         _loginSuccessfully.emit(true)
                         _loginState.value.copy(isLoading = false)
@@ -77,6 +91,30 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun googleSignIn(credential: AuthCredential) {
+        viewModelScope.launch {
+            googleSignInUseCase(credential).collect { result ->
+                when (result) {
+                    is AuthResult.Error -> _loginState.value.copy(
+                        errorMessage = result.message,
+                        isLoadingGoogle = false
+                    )
+
+                    is AuthResult.Loading -> _loginState.value.copy(
+                        isLoadingGoogle = true,
+                        errorMessage = null
+                    )
+
+                    is AuthResult.Success -> {
+                        _loginSuccessfully.emit(true)
+                        _loginState.value.copy(isLoadingGoogle = false)
+                    }
+                }
+            }
+        }
+
     }
 
 }

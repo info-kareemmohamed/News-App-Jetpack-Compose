@@ -3,10 +3,12 @@ package com.example.news.authentication.presentation.signup.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.authentication.domain.AuthResult
+import com.example.news.authentication.domain.usecase.GoogleSignInUseCase
 import com.example.news.authentication.domain.usecase.SignUpUseCase
 import com.example.news.authentication.domain.usecase.ValidateEmailUseCase
 import com.example.news.authentication.domain.usecase.ValidatePasswordUseCase
 import com.example.news.authentication.domain.usecase.ValidateUserNameUseCase
+import com.google.firebase.auth.AuthCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase,
+    private val googleSignInUseCase: GoogleSignInUseCase,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
     private val validateUserNameUseCase: ValidateUserNameUseCase
@@ -41,6 +44,7 @@ class SignUpViewModel @Inject constructor(
 
             is SignUpIntent.PasswordVisibilityChanged -> updateState(passwordVisibility = intent.isVisible)
              SignUpIntent.Submit -> submit()
+            is SignUpIntent.GoogleSignInClicked -> googleSignIn(intent.credential)
         }
     }
 
@@ -112,5 +116,29 @@ class SignUpViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun googleSignIn(credential: AuthCredential) {
+        viewModelScope.launch {
+            googleSignInUseCase(credential).collect { result ->
+                when (result) {
+                    is AuthResult.Error -> _signUpState.value.copy(
+                        errorMessage = result.message,
+                        isLoadingGoogle = false
+                    )
+
+                    is AuthResult.Loading -> _signUpState.value.copy(
+                        isLoadingGoogle = true,
+                        errorMessage = null
+                    )
+
+                    is AuthResult.Success -> {
+                        _signUpSuccessfully.emit(true)
+                        _signUpState.value.copy(isLoadingGoogle = false)
+                    }
+                }
+            }
+        }
+
     }
 }

@@ -1,6 +1,8 @@
 package com.example.news.authentication.presentation.login
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -8,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,11 +24,14 @@ import com.example.news.authentication.presentation.common.ConnectionOptions
 import com.example.news.authentication.presentation.common.ErrorText
 import com.example.news.authentication.presentation.common.PasswordField
 import com.example.news.authentication.presentation.common.InputField
+import com.example.news.authentication.presentation.common.createGoogleSignInOptions
+import com.example.news.authentication.presentation.common.handleGoogleSignInResult
 import com.example.news.authentication.presentation.login.mvi.LoginIntent
 import com.example.news.authentication.presentation.login.mvi.LoginViewModel
 import com.example.news.core.presentation.ui.theme.NewsTheme
 import com.example.news.core.util.Dimens
 import com.example.news.core.util.Dimens.MediumPadding_30
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 
 @Composable
@@ -35,7 +41,18 @@ fun LoginScreen(
     navigateToSignUpScreen: () -> Unit = {},
     navigateToForgotPasswordScreen: () -> Unit = {}
 ) {
+    viewModel.signOut()
     val state = viewModel.loginState.collectAsState()
+    val context = LocalContext.current
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        handleGoogleSignInResult(it) { credential ->
+            viewModel.onIntent(LoginIntent.GoogleSignInClicked(credential))
+        }
+    }
+
 
 
     LaunchedEffect(viewModel.loginSuccessfully) {
@@ -86,7 +103,13 @@ fun LoginScreen(
             state.value.isLoading
         ) { viewModel.onIntent(LoginIntent.LoginClicked) }
 
-        ConnectionOptions(modifier = Modifier.align(Alignment.CenterHorizontally)) {}
+        ConnectionOptions(
+            isGoogle = state.value.isLoadingGoogle,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            val googleSignInClient = GoogleSignIn.getClient(context, createGoogleSignInOptions())
+            launcher.launch(googleSignInClient.signInIntent)
+        }
 
         AuthClickableText("don't have an account ?", " Sign Up") { navigateToSignUpScreen() }
     }
