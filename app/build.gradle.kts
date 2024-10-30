@@ -25,14 +25,17 @@ android {
         }
 
         //To Load Firebase Server Client ID from local.properties file
-        val file = rootProject.file("local.properties")
-        val properties = Properties()
-        properties.load(file.inputStream())
+        val properties = Properties().apply {
+            load(rootProject.file("local.properties").inputStream())
+        }
         buildConfigField(
             "String",
             "FIREBASE_SERVER_CLIENT_ID",
             properties.getProperty("FIREBASE_SERVER_CLIENT_ID")
         )
+        buildConfigField("String", "Public_Key", properties.getProperty("Public_Key"))
+        buildConfigField("String", "Secret_Key", properties.getProperty("Secret_Key"))
+        buildConfigField("int", "Online_Card_Payment_Method_ID", properties.getProperty("Online_Card_Payment_Method_ID"))
     }
 
     buildTypes {
@@ -54,6 +57,7 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        dataBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -88,6 +92,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation("androidx.compose.material:material-icons-extended:1.7.3")
 
+    implementation("com.paymob.sdk:Paymob-SDK:1.3.0")
 
     implementation("androidx.navigation:navigation-compose:2.8.2")
 
