@@ -3,13 +3,13 @@ package com.example.news.authentication.data.repository
 import com.example.news.authentication.domain.AuthResult
 import com.example.news.authentication.domain.model.User
 import com.example.news.authentication.domain.repository.AuthRepository
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import com.google.firebase.auth.AuthCredential
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -63,11 +63,13 @@ class AuthRepositoryImpl @Inject constructor(
         return getUserFromFirestore(uid)
     }
 
-    override fun signOut(): Flow<AuthResult<String>> = flow {
-        emit(AuthResult.Loading())
+    override fun isUserSignedIn(): Boolean {
+        return firebaseAuth.currentUser != null
+    }
+
+    override fun logout() {
         firebaseAuth.signOut()
-        emit(AuthResult.Success("Sign out successful"))
-    }.catch { emit(AuthResult.Error(it.message ?: "An unknown error occurred")) }
+    }
 
 
     private suspend fun getUserFromFirestore(uid: String): User? {

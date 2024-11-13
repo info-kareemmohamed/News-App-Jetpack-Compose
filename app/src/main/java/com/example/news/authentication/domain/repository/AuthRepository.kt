@@ -1,6 +1,5 @@
 package com.example.news.authentication.domain.repository
 
-import android.content.IntentSender
 import com.example.news.authentication.domain.AuthResult
 import com.example.news.authentication.domain.model.User
 import com.google.firebase.auth.AuthCredential
@@ -13,6 +12,7 @@ interface AuthRepository {
     fun forgotPassword(email: String): Flow<AuthResult<String>>
     fun googleSignIn(credential: AuthCredential): Flow<AuthResult<User>>
     suspend fun getSignedInUser(): User?
-    fun signOut(): Flow<AuthResult<String>>
+    fun isUserSignedIn(): Boolean
+    fun logout()
 
 }
