@@ -48,9 +48,9 @@ class AuthRepositoryImpl @Inject constructor(
         val user = firebaseAuth.signInWithCredential(credential).await().user
             ?: throw Exception("User is null")
         val existingUser = getUserFromFirestore(user.uid) ?: User(
-            user.uid,
-            user.email.orEmpty(),
-            user.displayName.orEmpty()
+           id =  user.uid,
+           email =  user.email.orEmpty(),
+           name =  user.displayName.orEmpty()
         ).also {
             saveUserToFirestore(it, user.uid)
         }

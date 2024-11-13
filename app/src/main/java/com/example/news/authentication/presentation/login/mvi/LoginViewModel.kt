@@ -3,7 +3,6 @@ package com.example.news.authentication.presentation.login.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.authentication.domain.AuthResult
-import com.example.news.authentication.domain.repository.AuthRepository
 import com.example.news.authentication.domain.usecase.GoogleSignInUseCase
 import com.example.news.authentication.domain.usecase.LoginUseCase
 import com.example.news.authentication.domain.usecase.ValidateEmailUseCase
@@ -21,7 +20,6 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
-    private val authRepository: AuthRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase
 ) : ViewModel() {
@@ -43,9 +41,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-     fun signOut(){
-        authRepository.signOut()
-    }
 
     private fun updateState(
         email: String? = null,
@@ -96,7 +91,7 @@ class LoginViewModel @Inject constructor(
     private fun googleSignIn(credential: AuthCredential) {
         viewModelScope.launch {
             googleSignInUseCase(credential).collect { result ->
-                when (result) {
+                _loginState.value = when (result) {
                     is AuthResult.Error -> _loginState.value.copy(
                         errorMessage = result.message,
                         isLoadingGoogle = false

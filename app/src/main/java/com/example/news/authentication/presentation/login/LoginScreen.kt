@@ -4,9 +4,22 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -16,18 +29,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.news.R
 import com.example.news.authentication.presentation.common.AuthClickableText
 import com.example.news.authentication.presentation.common.ButtonAuthentication
 import com.example.news.authentication.presentation.common.ConnectionOptions
 import com.example.news.authentication.presentation.common.ErrorText
-import com.example.news.authentication.presentation.common.PasswordField
 import com.example.news.authentication.presentation.common.InputField
+import com.example.news.authentication.presentation.common.PasswordField
 import com.example.news.authentication.presentation.common.createGoogleSignInOptions
 import com.example.news.authentication.presentation.common.handleGoogleSignInResult
 import com.example.news.authentication.presentation.login.mvi.LoginIntent
-import com.example.news.authentication.presentation.login.mvi.LoginViewModel
+import com.example.news.authentication.presentation.login.mvi.LoginState
 import com.example.news.core.presentation.ui.theme.NewsTheme
 import com.example.news.core.util.Dimens
 import com.example.news.core.util.Dimens.MediumPadding_30
@@ -36,29 +48,26 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
-    navigateToHomeScreen: () -> Unit = {},
-    navigateToSignUpScreen: () -> Unit = {},
+    state: LoginState,
+    onIntent: (LoginIntent) -> Unit,
+    loginSuccessfully: Boolean,
+    navigateToHomeScreen: () -> Unit,
+    navigateToSignUpScreen: () -> Unit,
     navigateToForgotPasswordScreen: () -> Unit = {}
 ) {
-    viewModel.signOut()
-    val state = viewModel.loginState.collectAsState()
     val context = LocalContext.current
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {
         handleGoogleSignInResult(it) { credential ->
-            viewModel.onIntent(LoginIntent.GoogleSignInClicked(credential))
+            onIntent(LoginIntent.GoogleSignInClicked(credential))
         }
     }
 
 
-
-    LaunchedEffect(viewModel.loginSuccessfully) {
-        viewModel.loginSuccessfully.collect {
-            if (it) navigateToHomeScreen()
-        }
+    LaunchedEffect(loginSuccessfully) {
+        if (loginSuccessfully) navigateToHomeScreen()
     }
 
     Column(
@@ -72,39 +81,39 @@ fun LoginScreen(
 
         InputField(
             label = "Email",
-            value = state.value.email,
-            error = state.value.emailErrorMessage
-        ) { viewModel.onIntent(LoginIntent.EmailChanged(it)) }
+            value = state.email,
+            error = state.emailErrorMessage
+        ) { onIntent(LoginIntent.EmailChanged(it)) }
 
-        ErrorText(error = state.value.emailErrorMessage)
+        ErrorText(error = state.emailErrorMessage)
 
         Spacer(modifier = Modifier.height(Dimens.ExtraSmallPadding_6))
 
         PasswordField(
-            state.value.password,
-            state.value.isPasswordVisible,
-            error = state.value.passwordErrorMessage,
-            onVisibilityChange = { viewModel.onIntent(LoginIntent.VisibilityChanged(it)) },
+            state.password,
+            state.isPasswordVisible,
+            error = state.passwordErrorMessage,
+            onVisibilityChange = { onIntent(LoginIntent.VisibilityChanged(it)) },
             onValueChange = {
-                viewModel.onIntent(LoginIntent.PasswordChanged(it))
+                onIntent(LoginIntent.PasswordChanged(it))
             })
 
-        ErrorText(error = state.value.passwordErrorMessage)
+        ErrorText(error = state.passwordErrorMessage)
         Spacer(modifier = Modifier.height(Dimens.ExtraSmallPadding_15))
 
-        RememberMeRow(isChecked = state.value.isRememberMeChecked,
-            onCheckedChange = { viewModel.onIntent(LoginIntent.RememberMeChanged(it)) },
+        RememberMeRow(isChecked = state.isRememberMeChecked,
+            onCheckedChange = { onIntent(LoginIntent.RememberMeChanged(it)) },
             onForgetPasswordClick = { navigateToForgotPasswordScreen() }
         )
 
-        ErrorText(error = state.value.errorMessage)
+        ErrorText(error = state.errorMessage)
         ButtonAuthentication(
             "Login",
-            state.value.isLoading
-        ) { viewModel.onIntent(LoginIntent.LoginClicked) }
+            state.isLoading
+        ) { onIntent(LoginIntent.LoginClicked) }
 
         ConnectionOptions(
-            isGoogle = state.value.isLoadingGoogle,
+            isGoogle = state.isLoadingGoogle,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             val googleSignInClient = GoogleSignIn.getClient(context, createGoogleSignInOptions())
@@ -186,6 +195,12 @@ fun RememberMeRow(
 @Composable
 fun LoginScreenPreview() {
     NewsTheme {
-        LoginScreen()
+        LoginScreen(
+            state = LoginState(),
+            onIntent = {},
+            loginSuccessfully = false,
+            navigateToHomeScreen = {},
+            navigateToSignUpScreen = {}
+        )
     }
 }
